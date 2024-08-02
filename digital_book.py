@@ -6,3 +6,9 @@ class LivreNumerique(Livre):
         super().__init__(title=title, autor=autor, isbn=isbn)
         self.__type = "numerique"
         
+    def __str__(self) -> str:
+        return self.get_title()
+        
+    def get_type(self) -> str:
+        return self.__type
+        

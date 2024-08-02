@@ -13,8 +13,11 @@ from unicodedata import normalize
 class Livre:
     def __init__(self, title: str, autor: str, isbn: int) -> None:
         self.__title: str = (self.normalizer(title)).capitalize()
-        self.__autor: str = autor.lower()
+        self.__autor: str = autor.title()
         self.__isbn: int = isbn
+        
+    def __str__(self) -> str:
+        return f"Titre: {self.__title}"
         
     def normalizer(self, text: str) -> str:
         normalized_text = normalize('NFD', text)
