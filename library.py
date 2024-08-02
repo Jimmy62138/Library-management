@@ -9,11 +9,10 @@ def singleton(classe):
     return get_instance
    
    
-   
 @singleton 
 class Bibliotheque():
-    def __init__(self, test) -> None:
-        self.test = test
+    def __init__(self, value) -> None:
+        self.value = value
         
         
 
@@ -21,9 +20,11 @@ class Bibliotheque():
         
 if __name__ == "__main__":
     
+    # test singleton
     test_singleton1 = Bibliotheque("Premier")
     test_singleton2 = Bibliotheque("Second")
-    print(test_singleton1.test)
-    print(test_singleton2.test)
+    print(test_singleton1.value)
+    print(test_singleton2.value)
+    print(test_singleton1 is test_singleton2)
     
     
