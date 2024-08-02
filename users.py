@@ -8,3 +8,4 @@ class Utilisateur():
     
     def delete_user(self, username) -> None:
         pass
+    

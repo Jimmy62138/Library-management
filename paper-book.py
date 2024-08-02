@@ -6,4 +6,3 @@ class LivrePapier(Livre):
         super().__init__(title=title, autor=autor, isbn=isbn)
         self.__type = "papier"
         
-        
