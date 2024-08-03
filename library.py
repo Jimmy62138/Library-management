@@ -36,7 +36,7 @@ class Bibliotheque():
         self.__execute_query("""
         CREATE TABLE IF NOT EXISTS Users (
         UserID INTEGER PRIMARY KEY AUTOINCREMENT,
-        Name VARCHAR (30) NOT NULL
+        Name VARCHAR (30) UNIQUE NOT NULL
         ); 
         """)
         
