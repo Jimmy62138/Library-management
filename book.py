@@ -1,13 +1,3 @@
-'''
-Livre () Mother encapsulé
-params:
-			private titre :
-			private auteur:
-			private isbn
-
-		method:
-			Mettre à jour les informations du livre : Titre Auteur
-''';
 from unicodedata import normalize
 
 class Livre:

@@ -2,8 +2,8 @@ from book import Livre
 
 class LivrePapier(Livre):
     
-    def __init__(self, title: str, autor: str, isbn: int) -> None:
-        super().__init__(title=title, autor=autor, isbn=isbn)
+    def __init__(self, isbn: int, title: str, autor: str) -> None:
+        super().__init__(isbn=isbn, title=title, autor=autor)
         self.__type = "papier"
         
     def __str__(self) -> str:
