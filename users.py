@@ -14,7 +14,7 @@ class Utilisateur():
     def __str__(self) -> str:
         return self.__name  
     
-    def get_user(self):
+    def get_name(self):
         return self.__name
         
     def add_user(self) -> None:
@@ -25,6 +25,6 @@ class Utilisateur():
         
         
 if __name__ == "__main__":
-    jimmy = Utilisateur("Boris")
+    jimmy = Utilisateur("warnault")
     
-    jimmy.delete_user()
+    jimmy.add_user()

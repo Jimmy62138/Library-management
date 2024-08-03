@@ -16,12 +16,15 @@ class Bibliotheque():
     def __init__(self) -> None:
         self.__create_tables()
             
-    def __execute_query(self, query):
+    def __execute_query(self, query) -> list:
+        res = []
         conn = sqlite3.connect("database/database.db")
         c = conn.cursor()
         c.execute(query)
+        res = c.fetchall()
         conn.commit()
         conn.close()
+        return res
         
     def __create_tables(self):
         self.__execute_query("""
@@ -30,6 +33,7 @@ class Bibliotheque():
         Title VARCHAR (60) NOT NULL,
         Autor VARCHAR (30) NOT NULL,
         Type VARCHAR (10) NOT NULL,
+        Lend INTEGER DEFAULT 0,
         UserId INT REFERENCES Users (UserID) DEFAULT NULL
         ); 
         """)
@@ -56,11 +60,24 @@ class Bibliotheque():
         WHERE Isbn = {book.get_isbn()};
         """)
 
+    def borrow_book(self, book, user):
+        uid = self.__execute_query(f"SELECT UserID FROM Users WHERE Name = '{user.get_name()}';")[0][0]
+        self.__execute_query(f"""
+        UPDATE Books
+        SET
+        Lend = Lend + 1,
+        UserId = {uid}
+        WHERE Isbn = {book.get_isbn()};
+        """)
+        
+    def return_book(self, book):
+        self.__execute_query(f"""
+        UPDATE Books
+        SET
+        UserId = NULL
+        WHERE Isbn = {book.get_isbn()};
+        """)
            
 if __name__ == "__main__":
-    
-    # test singleton
-    library = Bibliotheque()
-
-    
+    Bibliotheque.borrow_book(987656789, "Warnault")
     
