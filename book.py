@@ -1,13 +1,13 @@
 from unicodedata import normalize
 
 class Livre:
-    def __init__(self, title: str, autor: str, isbn: int) -> None:
+    def __init__(self, isbn: int, title: str, autor: str) -> None:
+        self.__isbn: int = isbn
         self.__title: str = (self.normalizer(title)).capitalize()
         self.__autor: str = autor.title()
-        self.__isbn: int = isbn
         
     def __str__(self) -> str:
-        return f"Titre: {self.__title}"
+        return self.__title
         
     def normalizer(self, text: str) -> str:
         normalized_text = normalize('NFD', text)
@@ -16,7 +16,7 @@ class Livre:
     
     def get_title(self) -> str:
         return self.__title
-    
+
     def set_title(self, title) -> None:
         self.__title = title
         
@@ -32,6 +32,6 @@ class Livre:
         
 if __name__ == "__main__":
     
-    livre = Livre("il était une fois !", "stephen king", 1456789)
+    livre = Livre(1456789, "il était une fois !", "stephen king", )
     print(livre.get_title())
     

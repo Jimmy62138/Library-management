@@ -1,5 +1,8 @@
 import sqlite3
 
+from book import Livre
+
+
 def singleton(cls):
     _instance = {}
     
@@ -8,16 +11,16 @@ def singleton(cls):
             _instance[cls] = cls(*args, **kwargs)
         return _instance[cls]
     return get_instance
-   
-   
+
+
 @singleton
 class Bibliotheque():
     
     def __init__(self) -> None:
         self.__create_tables()
-            
-    def __execute_query(self, query) -> list:
-        res = []
+
+    @staticmethod
+    def __execute_query(query) -> list:
         conn = sqlite3.connect("database/database.db")
         c = conn.cursor()
         c.execute(query)
@@ -25,7 +28,7 @@ class Bibliotheque():
         conn.commit()
         conn.close()
         return res
-        
+
     def __create_tables(self):
         self.__execute_query("""
         CREATE TABLE IF NOT EXISTS Books (
@@ -47,8 +50,8 @@ class Bibliotheque():
     def add_book(self, book):
         self.__execute_query(f"INSERT INTO Books (Isbn, Title, Autor, Type) VALUES ({book.get_isbn()}, '{book.get_title()}', '{book.get_autor()}', '{book.get_type()}');")
         
-    def delete_book(self, book):
-        self.__execute_query(f"DELETE FROM Books WHERE Isbn = {book.get_isbn()};")
+    def delete_book(self, isbn):
+        self.__execute_query(f"DELETE FROM Books WHERE Isbn = {isbn};")
    
     def update_book(self, book):
         self.__execute_query(f"""
@@ -77,7 +80,12 @@ class Bibliotheque():
         UserId = NULL
         WHERE Isbn = {book.get_isbn()};
         """)
-           
+
+    def get_books(self) -> list:
+        return [Livre(book[0], book[1], book[2]) for book in self.__execute_query("SELECT * FROM Books")]
+
+
 if __name__ == "__main__":
-    Bibliotheque.borrow_book(987656789, "Warnault")
+    library = Bibliotheque()
+    library.get_books()
     
