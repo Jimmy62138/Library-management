@@ -1,19 +1,21 @@
 from unicodedata import normalize
 
+
+def normalizer(text: str) -> str:
+    normalized_text = normalize('NFD', text)
+    normalized_text = normalized_text.encode('ascii', 'ignore').decode("utf-8")
+    return normalized_text
+
+
 class Livre:
     def __init__(self, isbn: int, title: str, autor: str) -> None:
         self.__isbn: int = isbn
-        self.__title: str = (self.normalizer(title)).capitalize()
+        self.__title: str = (normalizer(title)).capitalize()
         self.__autor: str = autor.title()
         
     def __str__(self) -> str:
         return self.__title
-        
-    def normalizer(self, text: str) -> str:
-        normalized_text = normalize('NFD', text)
-        normalized_text = normalized_text.encode('ascii', 'ignore').decode("utf-8")
-        return normalized_text
-    
+
     def get_title(self) -> str:
         return self.__title
 

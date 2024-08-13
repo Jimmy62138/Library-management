@@ -1,6 +1,7 @@
 import sqlite3
 
-from book import Livre
+from digital_book import LivreNumerique
+from paper_book import LivrePapier
 
 
 def singleton(cls):
@@ -14,7 +15,7 @@ def singleton(cls):
 
 
 @singleton
-class Bibliotheque():
+class Bibliotheque:
     
     def __init__(self) -> None:
         self.__create_tables()
@@ -82,10 +83,14 @@ class Bibliotheque():
         """)
 
     def get_books(self) -> list:
-        return [Livre(book[0], book[1], book[2]) for book in self.__execute_query("SELECT * FROM Books")]
+        return [
+            LivrePapier(book[0], book[1], book[2]) if book[3] == "papier"
+            else LivreNumerique(book[0], book[1], book[2])
+            for book in self.__execute_query("SELECT * FROM Books")
+        ]
 
 
 if __name__ == "__main__":
     library = Bibliotheque()
-    library.get_books()
+    print(library.get_books())
     

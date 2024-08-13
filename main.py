@@ -1,18 +1,22 @@
-from InquirerPy import inquirer, get_style
+from sqlite3 import IntegrityError
 
+from InquirerPy import inquirer, get_style, prompt
+
+from book import Livre
 from library import Bibliotheque
 from paper_book import LivrePapier
 from digital_book import LivreNumerique
 from menu import MENU
+from users import Utilisateur
 
-STYLE = get_style({"pointer": "blue"}, style_override=False)
+# STYLE = get_style({"pointer": "blue"}, style_override=False)
 library = Bibliotheque()
 
 
 def get_menu() -> int:
     action = inquirer.select(
         message="Veuillez faire votre choix:",
-        choices=MENU, style=STYLE
+        choices=MENU
     ).execute()
     return int(action[0])
 
@@ -29,11 +33,11 @@ def add_book() -> None:
 
     while True:
         autor = inquirer.text(message="Entez l'auteur:").execute()
-        if not any (char.isdigit() for char in autor):
+        if not any(char.isdigit() for char in autor):
             break
         print("Erreur, le nom de l'auteur ne peux pas contenir de chiffres")
 
-    genre: str = inquirer.select(message="Papier ou Numérique ?:",choices=["Papier", "Numérique"], style=STYLE).execute()
+    genre: str = inquirer.select(message="Papier ou Numérique ?:",choices=["Papier", "Numérique"]).execute()
 
     if genre == "Papier":
         library.add_book(LivrePapier(isbn=isbn, title=title, autor=autor))
@@ -48,17 +52,45 @@ def delete_book() -> None:
         return
     book = inquirer.select(
         message="Veuillez sélectionner le livre à supprimer:",
-        choices=books, style=STYLE
+        choices=books
     ).execute()
     library.delete_book(book.get_isbn())
 
 
+def print_books(books: list):
+    print("*" * 23)
+    for book in books:
+        print(f"isbn:{book.get_isbn()}  titre:{book.get_title()}  auteur:{book.get_autor()}  type:{book.get_type()}")
+    print("*" * 23)
+
+
 def search_book():
-    pass
+    questions = [
+        {
+            "type": "fuzzy",
+            "message": "Select actions:",
+            "choices": library.get_books(),
+            "default": "",
+            "max_height": "70%",
+        }
+    ]
+
+    book = prompt(questions=questions)[0]
+    print_books([book])
+
 
 
 def add_user():
-    pass
+    while True:
+        user_name = inquirer.text(message="Entez le nom du nouvel utilisateur: ").execute()
+        if not any(char.isdigit() for char in user_name):
+            break
+        print("Erreur, le nom de l'utilisateur ne peux pas contenir de chiffres")
+    user = Utilisateur("Jimmy")
+    try:
+        user.add_user()
+    except IntegrityError:
+        print(f"L'utilisateur {user_name} existe déja")
 
 
 def show_books():
