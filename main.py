@@ -65,18 +65,28 @@ def print_books(books: list):
 
 
 def search_book():
-    questions = [
-        {
-            "type": "fuzzy",
-            "message": "Select actions:",
-            "choices": library.get_books(),
-            "default": "",
-            "max_height": "70%",
-        }
-    ]
+    books = library.get_books()
+    if books:
+        books_title = [book.get_title() for book in books]
 
-    book = prompt(questions=questions)[0]
-    print_books([book])
+        questions = [
+            {
+                "type": "fuzzy",
+                "message": "Select actions:",
+                "choices": books_title,
+                "default": "",
+                "max_height": "70%",
+            }
+        ]
+
+        selected_book = prompt(questions=questions)[0]
+        for book in books:
+            if book.get_title() == selected_book:
+                print(f"ISBN: {book.get_isbn()}  TITLE: {book.get_title()}  AUTEUR: {book.get_autor()}  TYPE: {book.get_type()}")
+                break
+    else:
+        print("La bibliothèque ne contient aucun livres.")
+
 
 
 
