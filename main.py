@@ -46,7 +46,7 @@ def add_book() -> None:
 
 
 def delete_book() -> None:
-    books = library.get_books()
+    books = library.get_all_books()
     if not books:
         print("La bibliothèque ne contient pas de livres.\n")
         return
@@ -64,16 +64,15 @@ def print_books(books: list):
     print("*" * 23)
 
 
-def search_book():
-    books = library.get_books()
+def search_books():
+    books = library.get_all_books()
     if books:
-        books_title = [book.get_title() for book in books]
 
         questions = [
             {
                 "type": "fuzzy",
                 "message": "Select actions:",
-                "choices": books_title,
+                "choices": [book.get_title() for book in books],
                 "default": "",
                 "max_height": "70%",
             }
@@ -82,12 +81,10 @@ def search_book():
         selected_book = prompt(questions=questions)[0]
         for book in books:
             if book.get_title() == selected_book:
-                print(f"ISBN: {book.get_isbn()}  TITLE: {book.get_title()}  AUTEUR: {book.get_autor()}  TYPE: {book.get_type()}")
+                print_books([book])
                 break
     else:
         print("La bibliothèque ne contient aucun livres.")
-
-
 
 
 def add_user():
@@ -96,7 +93,7 @@ def add_user():
         if not any(char.isdigit() for char in user_name):
             break
         print("Erreur, le nom de l'utilisateur ne peux pas contenir de chiffres")
-    user = Utilisateur("Jimmy")
+    user = Utilisateur(user_name)
     try:
         user.add_user()
     except IntegrityError:
@@ -104,17 +101,72 @@ def add_user():
 
 
 def show_books():
-    [print(book) for book in library.get_books()]
+    print_books(library.get_all_books())
+
+
+def borrow_book():
+    books = library.get_available_books()
+    users = library.get_users()
+
+    if books and users:
+        questions = [
+            {
+                "type": "fuzzy",
+                "message": "Veuillez choisir le livre à emprunté:",
+                "choices": books,
+                "default": "",
+                "max_height": "70%",
+            }
+        ]
+
+        selected_book = prompt(questions=questions)[0]
+
+        questions = [
+            {
+                "type": "fuzzy",
+                "message": "Veuillez choisir qui emprunte le livre:",
+                "choices": users,
+                "default": "",
+                "max_height": "70%",
+            }
+        ]
+
+        selected_user = prompt(questions=questions)[0]
+        library.borrow_book(selected_book, selected_user)
+
+    else:
+        print("La bibliothèque ne contient aucun livres disponible ou utilisateur.")
+
+
+def return_book():
+    books = library.get_unavailable_books()
+
+    if books:
+        questions = [
+            {
+                "type": "fuzzy",
+                "message": "Veuillez choisir le livre à rendre:",
+                "choices": books,
+                "default": "",
+                "max_height": "70%",
+            }
+        ]
+
+        selected_book = prompt(questions=questions)[0]
+        library.return_book(selected_book)
+
+    else:
+        print("La bibliothèque ne contient aucun livres emprunté.")
 
 
 def main():
     actions = {
         1: add_book,
         2: delete_book,
-        3: search_book,
+        3: search_books,
         4: add_user,
-        5: lambda: print("You can become a mobile app developer"),
-        6: lambda: None,
+        5: borrow_book,
+        6: return_book,
         7: show_books,
         8: lambda: None,
         9: exit

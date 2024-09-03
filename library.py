@@ -2,6 +2,7 @@ import sqlite3
 
 from digital_book import LivreNumerique
 from paper_book import LivrePapier
+from users import Utilisateur
 
 
 def singleton(cls):
@@ -82,15 +83,32 @@ class Bibliotheque:
         WHERE Isbn = {book.get_isbn()};
         """)
 
-    def get_books(self) -> list:
+    def get_all_books(self) -> list:
         return [
             LivrePapier(book[0], book[1], book[2]) if book[3] == "papier"
             else LivreNumerique(book[0], book[1], book[2])
             for book in self.__execute_query("SELECT * FROM Books")
         ]
 
+    def get_available_books(self) -> list:
+        return [
+            LivrePapier(book[0], book[1], book[2]) if book[3] == "papier"
+            else LivreNumerique(book[0], book[1], book[2])
+            for book in self.__execute_query("SELECT * FROM Books WHERE UserId IS NULL")
+        ]
+
+    def get_unavailable_books(self) -> list:
+        return [
+            LivrePapier(book[0], book[1], book[2]) if book[3] == "papier"
+            else LivreNumerique(book[0], book[1], book[2])
+            for book in self.__execute_query("SELECT * FROM Books WHERE UserId IS NOT NULL")
+        ]
+
+    def get_users(self) -> [Utilisateur]:
+        return [Utilisateur(user[1]) for user in self.__execute_query("SELECT * FROM Users;")]
+
 
 if __name__ == "__main__":
     library = Bibliotheque()
-    print(library.get_books())
+    print(library.get_all_books())
     
