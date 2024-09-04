@@ -1,7 +1,7 @@
 import sqlite3
 
 
-class Utilisateur:
+class Users:
     def __init__(self, nom: str) -> None:
         self.__name: str = nom.capitalize()
 

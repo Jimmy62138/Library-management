@@ -1,6 +1,7 @@
-from book import Livre
+from book import Book
 
-class LivreNumerique(Livre):
+
+class DigitalBook(Book):
     
     def __init__(self, isbn: int, title: str, autor: str) -> None:
         super().__init__(isbn=isbn, title=title, autor=autor)

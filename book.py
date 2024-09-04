@@ -2,12 +2,20 @@ from unicodedata import normalize
 
 
 def normalizer(text: str) -> str:
+    """
+    function to remove special characters
+    Args:
+        text (str): string to process
+
+    Returns:
+        string without special characters
+    """
     normalized_text = normalize('NFD', text)
     normalized_text = normalized_text.encode('ascii', 'ignore').decode("utf-8")
     return normalized_text
 
 
-class Livre:
+class Book:
     def __init__(self, isbn: int, title: str, autor: str) -> None:
         self.__isbn: int = isbn
         self.__title: str = (normalizer(title)).capitalize()
@@ -34,6 +42,6 @@ class Livre:
         
 if __name__ == "__main__":
     
-    livre = Livre(1456789, "il était une fois !", "stephen king", )
+    livre = Book(1456789, "il était une fois !", "stephen king", )
     print(livre.get_title())
     

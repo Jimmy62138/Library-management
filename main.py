@@ -2,15 +2,13 @@ from sqlite3 import IntegrityError
 
 from InquirerPy import inquirer, get_style, prompt
 
-from book import Livre
-from library import Bibliotheque
-from paper_book import LivrePapier
-from digital_book import LivreNumerique
+from library import Library
+from paper_book import PaperBook
+from digital_book import DigitalBook
 from menu import MENU
-from users import Utilisateur
+from users import Users
 
-# STYLE = get_style({"pointer": "blue"}, style_override=False)
-library = Bibliotheque()
+library = Library()
 
 
 def get_menu() -> int:
@@ -23,26 +21,26 @@ def get_menu() -> int:
 
 def add_book() -> None:
     while True:
-        isbn = inquirer.text(message="Entez l'ISBN:").execute()
+        isbn = inquirer.text(message="Entrez l'ISBN: ").execute()
         if isbn.isdigit():
             isbn = int(isbn)
             break
-        print("Erreur, veuillez entrez des chiffres uniquement")
+        print("Erreur, veuillez entrez des chiffres uniquement...")
 
-    title: str = inquirer.text(message="Entrez le titre:").execute()
+    title: str = inquirer.text(message="Entrez le titre: ").execute()
 
     while True:
-        autor = inquirer.text(message="Entez l'auteur:").execute()
+        autor = inquirer.text(message="Entrez l'auteur: ").execute()
         if not any(char.isdigit() for char in autor):
             break
         print("Erreur, le nom de l'auteur ne peux pas contenir de chiffres")
 
-    genre: str = inquirer.select(message="Papier ou Numérique ?:",choices=["Papier", "Numérique"]).execute()
+    genre: str = inquirer.select(message="Papier ou Numérique ?: ", choices=["Papier", "Numérique"]).execute()
 
     if genre == "Papier":
-        library.add_book(LivrePapier(isbn=isbn, title=title, autor=autor))
+        library.add_book(PaperBook(isbn=isbn, title=title, autor=autor))
     else:
-        library.add_book(LivreNumerique(isbn=isbn, title=title, autor=autor))
+        library.add_book(DigitalBook(isbn=isbn, title=title, autor=autor))
 
 
 def delete_book() -> None:
@@ -58,31 +56,29 @@ def delete_book() -> None:
 
 
 def print_books(books: list):
-    print("*" * 23)
+    print("*" * 70)
     for book in books:
-        print(f"isbn:{book.get_isbn()}  titre:{book.get_title()}  auteur:{book.get_autor()}  type:{book.get_type()}")
+        print(f"ISBN:{book.get_isbn()} | TITRE:{book.get_title()} | AUTEUR:{book.get_autor()} | TYPE:{book.get_type()}")
+        print("-" * 7)
     print("*" * 23)
 
 
 def search_books():
-    books = library.get_all_books()
-    if books:
-
+    
+    if books := library.get_all_books():
         questions = [
             {
                 "type": "fuzzy",
                 "message": "Select actions:",
-                "choices": [book.get_title() for book in books],
+                "choices": books,
                 "default": "",
                 "max_height": "70%",
             }
         ]
 
         selected_book = prompt(questions=questions)[0]
-        for book in books:
-            if book.get_title() == selected_book:
-                print_books([book])
-                break
+        print_books([selected_book])
+
     else:
         print("La bibliothèque ne contient aucun livres.")
 
@@ -93,7 +89,7 @@ def add_user():
         if not any(char.isdigit() for char in user_name):
             break
         print("Erreur, le nom de l'utilisateur ne peux pas contenir de chiffres")
-    user = Utilisateur(user_name)
+    user = Users(user_name)
     try:
         user.add_user()
     except IntegrityError:
