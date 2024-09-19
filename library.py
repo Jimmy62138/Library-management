@@ -170,6 +170,13 @@ class Library:
         """
         return [Users(user[1]) for user in self.__execute_query("SELECT * FROM Users;")]
 
+    def get_statistics(self) -> []:
+        """
+        Returns: All books with their associate number of lend from books table
+
+        """
+        return self.__execute_query("SELECT Title, Lend FROM Books ORDER BY Lend DESC")
+
 
 if __name__ == "__main__":
     library = Library()

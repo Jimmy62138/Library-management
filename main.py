@@ -59,8 +59,7 @@ def print_books(books: list):
     print("*" * 70)
     for book in books:
         print(f"ISBN:{book.get_isbn()} | TITRE:{book.get_title()} | AUTEUR:{book.get_autor()} | TYPE:{book.get_type()}")
-        print("-" * 7)
-    print("*" * 23)
+    print("*" * 70)
 
 
 def search_books():
@@ -115,7 +114,7 @@ def borrow_book():
             }
         ]
 
-        selected_book = prompt(questions=questions)[0]
+        selected_book: DigitalBook | PaperBook | None = prompt(questions=questions)[0]
 
         questions = [
             {
@@ -127,7 +126,7 @@ def borrow_book():
             }
         ]
 
-        selected_user = prompt(questions=questions)[0]
+        selected_user: Users | None = prompt(questions=questions)[0]
         library.borrow_book(selected_book, selected_user)
 
     else:
@@ -148,11 +147,22 @@ def return_book():
             }
         ]
 
-        selected_book = prompt(questions=questions)[0]
+        selected_book: DigitalBook | PaperBook | None = prompt(questions=questions)[0]
         library.return_book(selected_book)
 
     else:
         print("La bibliothèque ne contient aucun livres emprunté.")
+
+
+def statistics():
+    if books := library.get_statistics():
+        print("*" * 70)
+        for book in books:
+            print(f"Titre: {book[0]} | Prêter: {book[1]} fois.")
+        print("*" * 70)
+
+    else:
+        print("La bibliothèque ne contient aucun livres.")
 
 
 def main():
@@ -164,7 +174,7 @@ def main():
         5: borrow_book,
         6: return_book,
         7: show_books,
-        8: lambda: None,
+        8: statistics,
         9: exit
     }
 
@@ -176,9 +186,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    #livre = LivrePapier(987656789, "the lost symbol", "Dan Brown")
-    #library.add_book(livre)
-    #print(livre)
-    #livre.set_title("mars attack")
-    #library.update_book(livre)
-    # library.delete_book(livre)
