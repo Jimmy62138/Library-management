@@ -28,13 +28,13 @@ class Book:
         return self.__title
 
     def set_title(self, title) -> None:
-        self.__title = title
+        self.__title = (normalizer(title)).capitalize()
         
     def get_autor(self) -> str:
         return self.__autor
     
     def set_autor(self, autor) -> None:
-        self.__autor = autor
+        self.__autor = autor.title()
         
     def get_isbn(self) -> int:
         return self.__isbn

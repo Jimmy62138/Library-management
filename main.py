@@ -1,6 +1,6 @@
 from sqlite3 import IntegrityError
 
-from InquirerPy import inquirer, get_style, prompt
+from InquirerPy import inquirer, prompt
 
 from library import Library
 from paper_book import PaperBook
