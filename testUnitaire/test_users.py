@@ -1,5 +1,3 @@
-from sqlite3 import IntegrityError
-
 import pytest
 
 from users import Users
@@ -7,6 +5,7 @@ from users import Users
 @pytest.fixture
 def setup_db():
     Users.DB = "../database/database.db"
+
 
 @pytest.fixture
 def user(setup_db):

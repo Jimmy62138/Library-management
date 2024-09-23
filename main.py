@@ -46,7 +46,7 @@ def add_book() -> None:
 def delete_book() -> None:
     books = library.get_all_books()
     if not books:
-        print("La bibliothèque ne contient pas de livres.\n")
+        print("La bibliothèque ne contient pas de livres.")
         return
     book = inquirer.select(
         message="Veuillez sélectionner le livre à supprimer:",
@@ -56,10 +56,13 @@ def delete_book() -> None:
 
 
 def print_books(books: list):
-    print("*" * 70)
-    for book in books:
-        print(f"ISBN:{book.get_isbn()} | TITRE:{book.get_title()} | AUTEUR:{book.get_autor()} | TYPE:{book.get_type()}")
-    print("*" * 70)
+    if books:
+        print("\n" + "*" * 70)
+        for book in books:
+            print(f"ISBN:{book.get_isbn()} | TITRE:{book.get_title()} | AUTEUR:{book.get_autor()} | TYPE:{book.get_type()}")
+        print("*" * 70 + "\n")
+    else:
+        print("\nLa bibliothèque ne contient aucun livres.\n")
 
 
 def search_books():
@@ -68,7 +71,7 @@ def search_books():
         questions = [
             {
                 "type": "fuzzy",
-                "message": "Select actions:",
+                "message": "Sélectionner un livre.:",
                 "choices": books,
                 "default": "",
                 "max_height": "70%",
@@ -92,7 +95,28 @@ def add_user():
     try:
         user.add_user()
     except IntegrityError:
-        print(f"L'utilisateur {user_name} existe déja")
+        print(f"Erreur, l'utilisateur {user_name} existe déja")
+
+
+def delete_user():
+    users = library.get_users()
+
+    if users:
+        questions = [
+            {
+                "type": "fuzzy",
+                "message": "Veuillez choisir l'utilisateur à supprimer':",
+                "choices": users,
+                "default": "",
+                "max_height": "70%",
+            }
+        ]
+
+        selected_user: Users | None = prompt(questions=questions)[0]
+        library.delete_user(selected_user)
+
+    else:
+        print("La bibliothèque ne contient aucun utilisateur.")
 
 
 def show_books():
@@ -103,11 +127,15 @@ def borrow_book():
     books = library.get_available_books()
     users = library.get_users()
 
-    if books and users:
+    if not users:
+        print("La bibliothèque ne contient aucun utilisateur, veuillez en ajouté un.")
+    elif not books:
+        print("La bibliothèque ne contient aucun livres disponible.")
+    else:
         questions = [
             {
                 "type": "fuzzy",
-                "message": "Veuillez choisir le livre à emprunté:",
+                "message": "Veuillez choisir un livre à emprunté:",
                 "choices": books,
                 "default": "",
                 "max_height": "70%",
@@ -128,9 +156,6 @@ def borrow_book():
 
         selected_user: Users | None = prompt(questions=questions)[0]
         library.borrow_book(selected_book, selected_user)
-
-    else:
-        print("La bibliothèque ne contient aucun livres disponible ou utilisateur.")
 
 
 def return_book():
@@ -156,10 +181,10 @@ def return_book():
 
 def statistics():
     if books := library.get_statistics():
-        print("*" * 70)
+        print("\n" + "*" * 70)
         for book in books:
             print(f"Titre: {book[0]} | Prêter: {book[1]} fois.")
-        print("*" * 70)
+        print("*" * 70 + "\n")
 
     else:
         print("La bibliothèque ne contient aucun livres.")
@@ -171,11 +196,12 @@ def main():
         2: delete_book,
         3: search_books,
         4: add_user,
-        5: borrow_book,
-        6: return_book,
-        7: show_books,
-        8: statistics,
-        9: exit
+        5: delete_user,
+        6: borrow_book,
+        7: return_book,
+        8: show_books,
+        9: statistics,
+        0: exit
     }
 
     while True:

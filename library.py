@@ -15,22 +15,23 @@ def singleton(cls):
         instantiate class
     """
     _instance = {}
-    
+
     def get_instance(*args, **kwargs):
         if cls not in _instance:
             _instance[cls] = cls(*args, **kwargs)
         return _instance[cls]
+
     return get_instance
 
 
 @singleton
 class Library:
-    
-    def __init__(self) -> None:
+
+    def __init__(self, db="database/database.db") -> None:
+        self.DB: str = db
         self.__create_tables()
 
-    @staticmethod
-    def __execute_query(query) -> list:
+    def __execute_query(self, query) -> list:
         """
         static method to execute an SQL query
         Args:
@@ -39,7 +40,7 @@ class Library:
         Returns:
             SQL result
         """
-        conn = sqlite3.connect("database/database.db")
+        conn = sqlite3.connect(self.DB)
         c = conn.cursor()
         c.execute(query)
         res = c.fetchall()
@@ -67,7 +68,7 @@ class Library:
         Name VARCHAR (30) UNIQUE NOT NULL
         ); 
         """)
-        
+
     def add_book(self, book: DigitalBook | PaperBook):
         """
         Insert a book into database
@@ -77,7 +78,7 @@ class Library:
         self.__execute_query(f"""INSERT INTO Books (Isbn, Title, Autor, Type) VALUES (
                                 {book.get_isbn()}, '{book.get_title()}', '{book.get_autor()}', '{book.get_type()}');
                                 """)
-        
+
     def delete_book(self, isbn: int):
         """
         Delete a book by ISBN
@@ -85,7 +86,7 @@ class Library:
             isbn (int): ISBN number
         """
         self.__execute_query(f"DELETE FROM Books WHERE Isbn = {isbn};")
-   
+
     def update_book(self, book: DigitalBook | PaperBook):
         self.__execute_query(f"""
         UPDATE Books
@@ -111,20 +112,42 @@ class Library:
         UserId = {uid}
         WHERE Isbn = {book.get_isbn()};
         """)
-        
-    def return_book(self, book: DigitalBook | PaperBook):
+
+    def return_book(self, book: DigitalBook | PaperBook) -> bool:
         """
         Return a book by setting the null value of UserId to database
         Args:
             book(LivreNumérique | LivrePapier): book to return
 
         """
-        self.__execute_query(f"""
-        UPDATE Books
-        SET
-        UserId = NULL
-        WHERE Isbn = {book.get_isbn()};
-        """)
+        try:
+            self.__execute_query(f"""
+            UPDATE Books
+            SET
+            UserId = NULL
+            WHERE Isbn = {book.get_isbn()};
+            """)
+
+        except Exception:
+            raise False
+
+        return True
+
+    def get_a_book(self, isbn: int) -> [PaperBook | DigitalBook]:
+        """
+        Function to get a book from database
+        Args:
+            isbn (int): ISBN number
+
+        Returns:
+            An array with a book from database
+
+        """
+        return [
+            PaperBook(book[0], book[1], book[2]) if book[3] == "papier"
+            else DigitalBook(book[0], book[1], book[2])
+            for book in self.__execute_query(f"SELECT * FROM Books WHERE Isbn = {isbn}")
+        ]
 
     def get_all_books(self) -> [PaperBook | DigitalBook]:
         """
@@ -170,6 +193,9 @@ class Library:
         """
         return [Users(user[1]) for user in self.__execute_query("SELECT * FROM Users;")]
 
+    def delete_user(self, user: Users):
+        self.__execute_query(f"DELETE FROM Users WHERE Name == '{user.get_name()}';")
+
     def get_statistics(self) -> []:
         """
         Returns: All books with their associate number of lend from books table
@@ -181,4 +207,3 @@ class Library:
 if __name__ == "__main__":
     library = Library()
     print(library.get_all_books())
-    

@@ -3,6 +3,7 @@ import sqlite3
 
 class Users:
     DB = "database/database.db"
+
     def __init__(self, nom: str) -> None:
         self.__name: str = nom.capitalize()
 
