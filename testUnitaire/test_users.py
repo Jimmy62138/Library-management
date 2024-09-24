@@ -2,6 +2,7 @@ import pytest
 
 from users import Users
 
+
 @pytest.fixture
 def setup_db():
     Users.DB = "../database/database.db"

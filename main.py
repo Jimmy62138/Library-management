@@ -16,10 +16,14 @@ def get_menu() -> int:
         message="Veuillez faire votre choix:",
         choices=MENU
     ).execute()
-    return int(action[0])
+    return action[:2]
 
 
 def add_book() -> None:
+    """
+    Prompts the user to enter the ISBN, title, author, and genre of the book, validates the input, and adds the book to
+    the library.
+    """
     while True:
         isbn = inquirer.text(message="Entrez l'ISBN: ").execute()
         if isbn.isdigit():
@@ -30,20 +34,69 @@ def add_book() -> None:
     title: str = inquirer.text(message="Entrez le titre: ").execute()
 
     while True:
-        autor = inquirer.text(message="Entrez l'auteur: ").execute()
-        if not any(char.isdigit() for char in autor):
+        author = inquirer.text(message="Entrez l'auteur: ").execute()
+        if not any(char.isdigit() for char in author):
             break
         print("Erreur, le nom de l'auteur ne peux pas contenir de chiffres")
 
     genre: str = inquirer.select(message="Papier ou Numérique ?: ", choices=["Papier", "Numérique"]).execute()
 
     if genre == "Papier":
-        library.add_book(PaperBook(isbn=isbn, title=title, autor=autor))
+        library.add_book(PaperBook(isbn=isbn, title=title, author=author))
     else:
-        library.add_book(DigitalBook(isbn=isbn, title=title, autor=autor))
+        library.add_book(DigitalBook(isbn=isbn, title=title, author=author))
+
+
+def update_book():
+    """
+    Allows the user to update the details of a book in the library.
+    """
+    if books := library.get_all_books():
+        book = inquirer.select(
+            message="Quel livre voulez vous modifier ?:",
+            choices=books
+        ).execute()
+
+        isbn = book.get_isbn()
+        attribute = inquirer.select(
+            message="Quel voulez vous modifier ?:",
+            choices=["ISBN", "TITRE", "AUTEUR", "TYPE"]
+        ).execute()
+
+        if attribute == "ISBN":
+            while True:
+                new_isbn = inquirer.text(message="Entrez le nouvel ISBN: ").execute()
+                if new_isbn.isdigit():
+                    new_isbn = int(new_isbn)
+                    break
+                print("Erreur, veuillez entrez des chiffres uniquement...")
+
+            book.set_isbn(new_isbn)
+        elif attribute == "TITRE":
+            title = inquirer.text(message="Entrez le nouveau titre: ").execute()
+            book.set_title(title)
+
+        elif attribute == "AUTEUR":
+            while True:
+                author = inquirer.text(message="Entrez un nouveau nom d'auteur: ").execute()
+                if not any(char.isdigit() for char in author):
+                    break
+                print("Erreur, le nom de l'auteur ne peux pas contenir de chiffres")
+            book.set_author(author)
+        else:
+            support: str = inquirer.select(message="Papier ou Numérique ?: ", choices=["Papier", "Numérique"]).execute()
+            book.set_type(support)
+
+        library.update_book(book, isbn)
+
+    else:
+        print("La bibliothèque ne contient pas de livres.")
 
 
 def delete_book() -> None:
+    """
+    Deletes a book from the library by prompting the user to select a book to delete.
+    """
     books = library.get_all_books()
     if not books:
         print("La bibliothèque ne contient pas de livres.")
@@ -56,17 +109,25 @@ def delete_book() -> None:
 
 
 def print_books(books: list):
+    """
+    Prints the details of the books provided in a formatted manner.
+
+    Args:
+        books (list): A list of books to print.
+    """
     if books:
         print("\n" + "*" * 70)
         for book in books:
-            print(f"ISBN:{book.get_isbn()} | TITRE:{book.get_title()} | AUTEUR:{book.get_autor()} | TYPE:{book.get_type()}")
+            print(f"ISBN:{book.get_isbn()} | TITRE:{book.get_title()} | AUTEUR:{book.get_author()} | TYPE:{book.get_type()}")
         print("*" * 70 + "\n")
     else:
         print("\nLa bibliothèque ne contient aucun livres.\n")
 
 
 def search_books():
-    
+    """
+    Searches for books in the library and prints the details of the selected book.
+    """
     if books := library.get_all_books():
         questions = [
             {
@@ -86,6 +147,9 @@ def search_books():
 
 
 def add_user():
+    """
+    Adds a new user to the library by prompting the user to enter the user's name.
+    """
     while True:
         user_name = inquirer.text(message="Entez le nom du nouvel utilisateur: ").execute()
         if not any(char.isdigit() for char in user_name):
@@ -99,9 +163,10 @@ def add_user():
 
 
 def delete_user():
-    users = library.get_users()
-
-    if users:
+    """
+    Deletes a user from the library by prompting the user to select a user to delete.
+    """
+    if users := library.get_users():
         questions = [
             {
                 "type": "fuzzy",
@@ -120,10 +185,16 @@ def delete_user():
 
 
 def show_books():
+    """
+    Displays all books in the library.
+    """
     print_books(library.get_all_books())
 
 
 def borrow_book():
+    """
+    Allows a user to borrow a book from the library.
+    """
     books = library.get_available_books()
     users = library.get_users()
 
@@ -159,9 +230,10 @@ def borrow_book():
 
 
 def return_book():
-    books = library.get_unavailable_books()
-
-    if books:
+    """
+    Allows a user to return a borrowed book to the library.
+    """
+    if books := library.get_unavailable_books():
         questions = [
             {
                 "type": "fuzzy",
@@ -180,6 +252,9 @@ def return_book():
 
 
 def statistics():
+    """
+    Displays the statistics of books loans.
+    """
     if books := library.get_statistics():
         print("\n" + "*" * 70)
         for book in books:
@@ -192,20 +267,22 @@ def statistics():
 
 def main():
     actions = {
-        1: add_book,
-        2: delete_book,
-        3: search_books,
-        4: add_user,
-        5: delete_user,
-        6: borrow_book,
-        7: return_book,
-        8: show_books,
-        9: statistics,
-        0: exit
+        "01": add_book,
+        "02": update_book,
+        "03": delete_book,
+        "04": search_books,
+        "05": add_user,
+        "06": delete_user,
+        "07": borrow_book,
+        "08": return_book,
+        "09": show_books,
+        "10": statistics,
+        "00": exit
     }
 
     while True:
         choice = get_menu()
+        print(choice)
         action = actions.get(choice)
         action()
 

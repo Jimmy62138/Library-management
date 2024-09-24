@@ -6,7 +6,7 @@ from book import normalizer
 
 @pytest.fixture()
 def book():
-    return Book(7896512365, "a title", "an autor")
+    return Book(7896512365, "a title", "an author")
 
 
 def test_normalizer():
@@ -21,8 +21,8 @@ def test_book_title(book):
     assert book.get_title() == "A title"
 
 
-def test_book_autor(book):
-    assert book.get_autor() == "An Autor"
+def test_book_author(book):
+    assert book.get_author() == "An Author"
 
 
 def test_set_title(book):
@@ -30,6 +30,6 @@ def test_set_title(book):
     assert book.get_title() == "Un autre titre"
 
 
-def test_set_autor(book):
-    book.set_autor("un autre auteur")
-    assert book.get_autor() == "Un Autre Auteur"
+def test_set_author(book):
+    book.set_author("un autre auteur")
+    assert book.get_author() == "Un Autre Auteur"

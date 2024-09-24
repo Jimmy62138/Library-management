@@ -28,6 +28,13 @@ def singleton(cls):
 class Library:
 
     def __init__(self, db="database/database.db") -> None:
+        """
+        A singleton class representing a library with methods to manage books and users in a database.
+
+        Attributes:
+            self.DB (str): The path to the database file.
+
+        """
         self.DB: str = db
         self.__create_tables()
 
@@ -56,7 +63,7 @@ class Library:
         CREATE TABLE IF NOT EXISTS Books (
         Isbn INTEGER PRIMARY KEY UNIQUE NOT NULL,
         Title VARCHAR (60) NOT NULL,
-        Autor VARCHAR (30) NOT NULL,
+        Author VARCHAR (30) NOT NULL,
         Type VARCHAR (10) NOT NULL,
         Lend INTEGER DEFAULT 0,
         UserId INT REFERENCES Users (UserID) DEFAULT NULL
@@ -75,26 +82,33 @@ class Library:
         Args:
             book (DigitalBook | PaperBook): book
         """
-        self.__execute_query(f"""INSERT INTO Books (Isbn, Title, Autor, Type) VALUES (
-                                {book.get_isbn()}, '{book.get_title()}', '{book.get_autor()}', '{book.get_type()}');
+        self.__execute_query(f"""INSERT INTO Books (Isbn, Title, Author, Type) VALUES (
+                                {book.get_isbn()}, '{book.get_title()}', '{book.get_author()}', '{book.get_type()}');
                                 """)
 
     def delete_book(self, isbn: int):
         """
         Delete a book by ISBN
         Args:
-            isbn (int): ISBN number
+            isbn (int): ISBN
         """
         self.__execute_query(f"DELETE FROM Books WHERE Isbn = {isbn};")
 
-    def update_book(self, book: DigitalBook | PaperBook):
+    def update_book(self, book: DigitalBook | PaperBook, isbn: int) -> None:
+        """
+        Updates book information in the database.
+        Args:
+            book (DigitalBook | PaperBook):
+            isbn (int): Old ISBN
+        """
         self.__execute_query(f"""
         UPDATE Books
         SET
+        Isbn = '{book.get_isbn()}',
         Title = '{book.get_title()}',
-        Autor = '{book.get_autor()}',
+        Author = '{book.get_author()}',
         Type = '{book.get_type()}'
-        WHERE Isbn = {book.get_isbn()};
+        WHERE Isbn = {isbn};
         """)
 
     def borrow_book(self, book: DigitalBook | PaperBook, user: Users):
@@ -128,8 +142,8 @@ class Library:
             WHERE Isbn = {book.get_isbn()};
             """)
 
-        except Exception:
-            raise False
+        except Exception as e:
+            raise False from e
 
         return True
 
@@ -137,14 +151,14 @@ class Library:
         """
         Function to get a book from database
         Args:
-            isbn (int): ISBN number
+            isbn (int): ISBN
 
         Returns:
             An array with a book from database
 
         """
         return [
-            PaperBook(book[0], book[1], book[2]) if book[3] == "papier"
+            PaperBook(book[0], book[1], book[2]) if book[3] == "Papier"
             else DigitalBook(book[0], book[1], book[2])
             for book in self.__execute_query(f"SELECT * FROM Books WHERE Isbn = {isbn}")
         ]
@@ -156,7 +170,7 @@ class Library:
             An array with all books from database
         """
         return [
-            PaperBook(book[0], book[1], book[2]) if book[3] == "papier"
+            PaperBook(book[0], book[1], book[2]) if book[3] == "Papier"
             else DigitalBook(book[0], book[1], book[2])
             for book in self.__execute_query("SELECT * FROM Books")
         ]
@@ -168,7 +182,7 @@ class Library:
             Array with all unloaned books
         """
         return [
-            PaperBook(book[0], book[1], book[2]) if book[3] == "papier"
+            PaperBook(book[0], book[1], book[2]) if book[3] == "Papier"
             else DigitalBook(book[0], book[1], book[2])
             for book in self.__execute_query("SELECT * FROM Books WHERE UserId IS NULL")
         ]
@@ -180,7 +194,7 @@ class Library:
             Array with all loaned books
         """
         return [
-            PaperBook(book[0], book[1], book[2]) if book[3] == "papier"
+            PaperBook(book[0], book[1], book[2]) if book[3] == "Papier"
             else DigitalBook(book[0], book[1], book[2])
             for book in self.__execute_query("SELECT * FROM Books WHERE UserId IS NOT NULL")
         ]
@@ -194,11 +208,16 @@ class Library:
         return [Users(user[1]) for user in self.__execute_query("SELECT * FROM Users;")]
 
     def delete_user(self, user: Users):
+        """
+        Deletes a user from the Users table in the database.
+        Args:
+            user (Users): An Users object
+        """
         self.__execute_query(f"DELETE FROM Users WHERE Name == '{user.get_name()}';")
 
     def get_statistics(self) -> []:
         """
-        Returns: All books with their associate number of lend from books table
+        Returns: An array with all books with their associate number of lend from books table
 
         """
         return self.__execute_query("SELECT Title, Lend FROM Books ORDER BY Lend DESC")

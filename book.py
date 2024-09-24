@@ -10,16 +10,26 @@ def normalizer(text: str) -> str:
     Returns:
         string without special characters
     """
+    text = text.replace("'", " ")
     normalized_text = normalize('NFD', text)
     normalized_text = normalized_text.encode('ascii', 'ignore').decode("utf-8")
     return normalized_text
 
 
 class Book:
-    def __init__(self, isbn: int, title: str, autor: str) -> None:
+    def __init__(self, isbn: int, title: str, author: str) -> None:
+        """
+        A class representing a book with attributes for ISBN, title, and author.
+        Methods to get and set the title, author, and ISBN of the book.
+
+        Attributes:
+            isbn (int): The ISBN of the book.
+            title (str): The title of the book.
+            author (str): The author of the book.
+        """
         self.__isbn: int = isbn
-        self.__title: str = (normalizer(title)).capitalize()
-        self.__autor: str = autor.title()
+        self.__title: str = normalizer(title).capitalize()
+        self.__author: str = author.title()
         
     def __str__(self) -> str:
         return self.__title
@@ -28,14 +38,17 @@ class Book:
         return self.__title
 
     def set_title(self, title) -> None:
-        self.__title = (normalizer(title)).capitalize()
+        self.__title = normalizer(title).capitalize()
         
-    def get_autor(self) -> str:
-        return self.__autor
+    def get_author(self) -> str:
+        return self.__author
     
-    def set_autor(self, autor) -> None:
-        self.__autor = autor.title()
-        
+    def set_author(self, author) -> None:
+        self.__author = author.title()
+
+    def set_isbn(self, isbn: int) -> None:
+        self.__isbn = isbn
+
     def get_isbn(self) -> int:
         return self.__isbn
         

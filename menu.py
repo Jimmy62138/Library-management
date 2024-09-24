@@ -1,12 +1,13 @@
 MENU = [
-    "1. Ajouter un livre",
-    "2. Supprimer un livre",
-    "3. Rechercher un livre",
-    "4. Ajouter un utilisateur",
-    "5. Supprimer un utilisateur",
-    "6. Emprunter un livre",
-    "7. Retourner un livre",
-    "8. Lister les livres",
-    "9. Statistiques",
-    "0. Quitter"
+    "01. Ajouter un livre",
+    "02. Modifier un livre",
+    "03. Supprimer un livre",
+    "04. Rechercher un livre",
+    "05. Ajouter un utilisateur",
+    "06. Supprimer un utilisateur",
+    "07. Emprunter un livre",
+    "08. Retourner un livre",
+    "09. Lister les livres",
+    "10. Statistiques",
+    "00. Quitter"
 ]
