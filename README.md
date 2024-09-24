@@ -44,3 +44,15 @@ pip install -r requirements.txt
 Python3 main.py
 ```
 
+## Documentations
+
+| Documentations     | Path                             |
+|--------------------|----------------------------------|
+| DocString (Sphinx) | /docs/_build/html/index.html     |
+| Pytest result      | /testUnitaire/index.html         |
+| Tests coverage     | /testUnitaire/htmlcov/index.html |
+
+
+JIMMY
+
+**Free Software, Hell Yeah!**
