@@ -10,7 +10,7 @@ def book():
 
 
 def test_normalizer():
-    assert normalizer("énorme Python ç'est la vie.") == "enorme Python c'est la vie."
+    assert normalizer("énorme Python ç'est la vie.") == "enorme Python c est la vie."
 
 
 def test_book_isbn(book):

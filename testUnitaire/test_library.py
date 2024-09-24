@@ -28,7 +28,7 @@ def test_add_book(library, book):
 
 def test_update_book(library, book):
     book.set_title("Livre de test 2")
-    library.update_book(book)
+    library.update_book(book, book.get_isbn())
     updated_book = library.get_a_book(book.get_isbn())[0]
     assert updated_book.get_title() == "Livre de test 2"
 

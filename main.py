@@ -41,10 +41,8 @@ def add_book() -> None:
 
     genre: str = inquirer.select(message="Papier ou Numérique ?: ", choices=["Papier", "Numérique"]).execute()
 
-    if genre == "Papier":
-        library.add_book(PaperBook(isbn=isbn, title=title, author=author))
-    else:
-        library.add_book(DigitalBook(isbn=isbn, title=title, author=author))
+    book_class = PaperBook if genre == "Papier" else DigitalBook
+    library.add_book(book_class(isbn=isbn, title=title, author=author))
 
 
 def update_book():
@@ -138,10 +136,8 @@ def search_books():
                 "max_height": "70%",
             }
         ]
-
         selected_book = prompt(questions=questions)[0]
         print_books([selected_book])
-
     else:
         print("La bibliothèque ne contient aucun livres.")
 
@@ -176,7 +172,6 @@ def delete_user():
                 "max_height": "70%",
             }
         ]
-
         selected_user: Users | None = prompt(questions=questions)[0]
         library.delete_user(selected_user)
 
@@ -212,7 +207,6 @@ def borrow_book():
                 "max_height": "70%",
             }
         ]
-
         selected_book: DigitalBook | PaperBook | None = prompt(questions=questions)[0]
 
         questions = [
@@ -224,7 +218,6 @@ def borrow_book():
                 "max_height": "70%",
             }
         ]
-
         selected_user: Users | None = prompt(questions=questions)[0]
         library.borrow_book(selected_book, selected_user)
 
@@ -243,10 +236,8 @@ def return_book():
                 "max_height": "70%",
             }
         ]
-
         selected_book: DigitalBook | PaperBook | None = prompt(questions=questions)[0]
         library.return_book(selected_book)
-
     else:
         print("La bibliothèque ne contient aucun livres emprunté.")
 
@@ -260,7 +251,6 @@ def statistics():
         for book in books:
             print(f"Titre: {book[0]} | Prêter: {book[1]} fois.")
         print("*" * 70 + "\n")
-
     else:
         print("La bibliothèque ne contient aucun livres.")
 
@@ -282,7 +272,6 @@ def main():
 
     while True:
         choice = get_menu()
-        print(choice)
         action = actions.get(choice)
         action()
 
