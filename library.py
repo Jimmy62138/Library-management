@@ -1,3 +1,5 @@
+"""Class library that allows you to manage a library of books and their user"""
+
 import sqlite3
 
 from digital_book import DigitalBook
@@ -7,13 +9,39 @@ from users import Users
 
 def singleton(cls):
     """
+    ----------------------------- Singleton function --------------------------------------
+
     function that allows you to have only one instance of a class
     Args:
         cls: class to instantiate
 
     Returns:
         instantiate class
-    """
+
+
+    ----------------------------- Library class --------------------------------------
+
+    A class representing a library with methods to manage books and users in a database.
+
+    Args:
+    nom (str): The name of the user.
+
+    Methods:
+        __execute_query: Executes an SQL query.
+        __create_tables: Automatically creates needed SQL tables if they do not exist.
+        add_book: Inserts a book into the database.
+        delete_book: Deletes a book by ISBN.
+        update_book: Updates book information in the database.
+        borrow_book: Associates a user with a book in the database.
+        return_book: Returns a book by setting the null value of UserId in the database.
+        get_a_book: Retrieves a book from the database.
+        get_all_books: Retrieves all books from the database.
+        get_available_books: Retrieves all unloaned books from the database.
+        get_unavailable_books: Retrieves all loaned books from the database.
+        get_users: Retrieves all users from the Users table in the database.
+        delete_user: Deletes a user from the Users table in the database.
+        get_statistics: Retrieves book statistics with the number of times each book has been borrowed.
+        """
     _instance = {}
 
     def get_instance(*args, **kwargs):
@@ -28,13 +56,6 @@ def singleton(cls):
 class Library:
 
     def __init__(self, db="database/database.db") -> None:
-        """
-        A singleton class representing a library with methods to manage books and users in a database.
-
-        Attributes:
-            self.DB (str): The path to the database file.
-
-        """
         self.DB: str = db
         self.__create_tables()
 

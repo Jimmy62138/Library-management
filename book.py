@@ -1,3 +1,5 @@
+"""A class representing a book with attributes for ISBN, title, and author."""
+
 from unicodedata import normalize
 
 
@@ -22,7 +24,7 @@ class Book:
         A class representing a book with attributes for ISBN, title, and author.
         Methods to get and set the title, author, and ISBN of the book.
 
-        Attributes:
+        Args:
             isbn (int): The ISBN of the book.
             title (str): The title of the book.
             author (str): The author of the book.
@@ -30,7 +32,7 @@ class Book:
         self.__isbn: int = isbn
         self.__title: str = normalizer(title).capitalize()
         self.__author: str = author.title()
-        
+
     def __str__(self) -> str:
         return self.__title
 
@@ -39,10 +41,10 @@ class Book:
 
     def set_title(self, title) -> None:
         self.__title = normalizer(title).capitalize()
-        
+
     def get_author(self) -> str:
         return self.__author
-    
+
     def set_author(self, author) -> None:
         self.__author = author.title()
 
@@ -51,10 +53,8 @@ class Book:
 
     def get_isbn(self) -> int:
         return self.__isbn
-        
-        
+
+
 if __name__ == "__main__":
-    
     livre = Book(1456789, "il était une fois !", "stephen king", )
     print(livre.get_title())
-    

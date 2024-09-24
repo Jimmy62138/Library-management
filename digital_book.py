@@ -8,8 +8,11 @@ class DigitalBook(Book):
         """
         A class representing a digital book that inherits from the Book class.
 
-        Attributes:
-            self.__type (str): The type of the digital book.
+        Args:
+            self.__type (str): The type of the support here: Numérique.
+            isbn (int): The ISBN of the digital book.
+            title (str): The title of the digital book.
+            author (str): The author of the digital book.
 
         Methods:
             __str__: Returns the title of the digital book.
