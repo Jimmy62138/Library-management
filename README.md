@@ -45,6 +45,23 @@ pip install -r requirements.txt
 Python3 main.py
 ```
 
+
+**On first start the code will automatically create a database with 2 empty SQL tables: Books and Users**
+
+| Documentations        | Path                                  |
+|-----------------------|---------------------------------------|
+| Users                 | UserID (integer) unique autoincrement |
+|                       | Name   (varchar) not null             |
+| --------------------- | ------------------------------------  |
+| Books                 | Isbn   (interger) unique not null     |
+|                       | Title  (varchar)  not null            |
+|                       | Author (varchar)  not null            |
+|                       | Type   (varchar)  not null            |
+|                       | Lend   (interger) default 0           |
+|                       | UserID (int)      default null        |
+
+
+
 ## Documentations
 
 | Documentations     | Path                             |
