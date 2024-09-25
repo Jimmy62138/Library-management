@@ -2,7 +2,7 @@
 ## Docstring project around POO
 
 
-Library is a project made in Python that aims to manage a library of books and users.
+Library is a project made with Python that aims to manage a library of books and users.
 
 ## Features
 
@@ -21,6 +21,7 @@ Library is a project made in Python that aims to manage a library of books and u
 - Save fonctionality into Sqlite3 database
 
 > The main goal of this library is to learn object-oriented programming with Python.
+> This includes object-oriented programming, unit testing, comments and docstrings.
 
 ## Tech
 
@@ -37,7 +38,7 @@ The library uses a number of the following open source projects:
 
 Library requires [Python3](https://www.python.org/) to run.
 
-Install the dependencies and start the server.
+Install the dependencies and start the program.
 
 ```sh
 pip install -r requirements.txt
